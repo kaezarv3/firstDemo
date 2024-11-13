@@ -1,0 +1,22 @@
+.canvBox1 {
+  width: 75%;
+  height: 80%;
+  box-sizing: border-box;
+  /* border: 1px solid green; */
+  background-color: rgb(233, 208, 208);
+  margin-bottom: 1rem;
+}
+
+.Maindiv {
+  justify-content: center;
+  justify-items: center;
+  border: 1px solid red; 
+}
+h1 {
+  /* color: white; */
+  text-align: center;
+}
+body {
+  background: #b5cfec;
+}
+

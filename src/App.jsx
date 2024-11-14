@@ -1,143 +1,78 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Edges, OrbitControls, Outlines, Wireframe } from '@react-three/drei'
+import { Edges, OrbitControls, Outlines, Torus, Wireframe, Octahedron, TorusKnot, Box, Tetrahedron, Cylinder, Dodecahedron, Sphere, Icosahedron } from '@react-three/drei'
 import { EffectComposer, Outline, Pixelation } from '@react-three/postprocessing';
-import { EdgesGeometry, LineBasicMaterial, LineSegments, BoxGeometry } from "three";
-import * as THREE from 'three';
-
-
-// import { useControls } from 'leva'
-
-
 import './App.css'
 
-// function Box(props) {
-//     // This reference gives us direct access to the THREE.Mesh object
-//     const ref = useRef()
-//     const [hovered, hover] = useState(false)
-//     const [clicked, click] = useState(false)
-//     // Subscribe this component to the render-loop, rotate the mesh every frame
-//     useFrame((state, delta) => { // This is supposed to be the same as the section in tetrahedron
-//       ref.current.rotation.x += delta 
-//        }) 
-//     // Return the view, these are regular Threejs elements expressed in JSX
-//     return (
-//       <mesh
-//         {...props}
-//         ref={ref}
-//         scale={clicked ? 1.5 : 1}
-//         onClick={() => click(!clicked)}
-//         onPointerOver={(event) => (event.stopPropagation(), hover(true))}
-//         onPointerOut={() => hover(false)}>
-//         <boxGeometry args={[1, 1, 1]} />
-//         <meshStandardMaterial  color={hovered ? 'hotpink' : 'orange'} />
-//         <Edges color={'black'}/>
-//       </mesh>
-          
-//     )
-// };
 
-// function Tetrahedron(props) {
-//   const ref = useRef()
-//   const [hovered, hover] = useState(false)
-//   const [clicked, click] = useState(false)
+const ShapeGiven = React.forwardRef(({ shapeType, ...props }, ref) => {
+  switch (shapeType) {
+    case 0:
+      return <Torus ref={ref} {...props} args={[1.5,.6,16,32]} />
+    case 1:
+      return <Cylinder ref={ref} {...props} args={[1.5, 1.5,3]}/>;
+    case 2:
+      return <Sphere ref={ref} {...props} Wireframe args={[1.9, 32, 32]} />;
+    case 3:
+      return <Box ref={ref} {...props} args={[2, 2, 2]} />;
+    case 4:
+      return <Icosahedron ref={ref} {...props} args={[2.4, 0]} />
+    case 5:
+      return <Octahedron ref={ref} {...props} args={[2,2]}/>;
+    case 6:
+      return <Dodecahedron ref={ref} {...props} args={[1.5,0]} />;
+    case 7:
+      return <Tetrahedron ref={ref} {...props} args={[2, 0]} />;
+    case 8:
+      return <TorusKnot ref={ref} {...props} args={[1,.5,30,15]}/>;
+    default:
+      return null;
+  }
+});
 
-//   function onHover(event){
-//     hover(true)
-//     event.stopPropagation()
-//   }
-//   // useframe is Used to animate the shape in question
-//   useFrame((state, delta) => { 
-//     if (hovered) {
-//       ref.current.rotation.x += delta * 2
-//       ref.current.rotation.y += delta * 4
-//     } 
-//     ref.current.rotation.x += delta * .5
-//     ref.current.rotation.y += delta * .5
-//      }) 
+ShapeGiven.displayName = "ShapeGiven";
 
-//   return(
-//     <mesh {...props}
-//     ref={ref}
-//     scale={clicked ? 1.5 : 1}
-//     onClick={() => click(!clicked)}
-//     onPointerOver={e => onHover(e)}
-//     onPointerOut={() => hover(false)}>
-//     <tetrahedronGeometry args={[2,0]} />
-//     <meshStandardMaterial  color={hovered ? 'hotpink' : 'orange'} />
-//     <Edges color={'black'}/>
-//     </mesh>
-//   )
-// }
-
-const AnyShape = ({shape, ...props}) => {
+const AnyShape = ({shapeType}) => {
   const ref = useRef();
+  const [elapsed, elapse] = useState(0)
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
-  // const { outlines } = useControls({ outlines: true })
 
   useFrame((state, delta) => {
-    ref.current.rotation.x += delta * (hovered ? 1.5 : 0.5);
-    ref.current.rotation.y += delta * (hovered ? 3 : 0.5);
+    if (ref.current) {
+      ref.current.rotation.x += delta * (hovered ? 1.5 : 0.5);
+      ref.current.rotation.y += delta * (hovered ? 3 : 0.5);
+    }
+    elapse(elapsed + delta);
   });
 
-    // Geometry Selection
-    let geometry;
-    switch (shape) {
-      case 0:
-        geometry = <><boxGeometry args={[2.5, 2.5, 2.5]} /></>;
-        break;
-      case 1:
-        geometry = <><tetrahedronGeometry args={[2, 0]} />  </>;
-        break;
-      case 2:
-        geometry = <><cylinderGeometry args={[1.5, 1.5,3]}/>   </>;
-        break; 
-      case 3:
-        geometry = <><dodecahedronGeometry args={[1.5,0]}/> </>;
-        break;
-      case 4:
-        geometry = <><torusGeometry args={[1.5,.6,16,32]}/> </>;
-        break;
-      case 5:
-        geometry = <><octahedronGeometry args={[2,2]}/> </>;
-        break;
-      case 6:
-        geometry = <><sphereGeometry args={[1.9,25,25]}/>  </>;
-        break;
-      case 7:
-        geometry = <><torusKnotGeometry args={[1,0.5,64,7]}/> </>;
-        break;
-      case 8:
-        geometry = <><icosahedronGeometry args={[2.4,0]}/> </>;
-        break; 
-      default:
-        shape = 0
-        geometry = <><boxGeometry args={[3, 3, 3]} /></>;
-    }
-
   return (
-    <mesh
-    {...props}
-    ref={ref}
-    scale={clicked ? 1.5 : 1}
-    onClick={() => click(!clicked)}
-    onPointerOver={(e) => (hover(true), e.stopPropagation())}
-    onPointerOut={() => hover(false)}
-  >
-    {geometry}
-    
-    <meshStandardMaterial color={hovered ? "red" : "lightblue" }  />
-    <Outlines angle={5} thickness={2} color={'black'} />
-    {/* This is the line causing the issue. */}
-    </mesh>
+  <>
+<ShapeGiven shapeType={shapeType} ref={ref} onPointerEnter={() => hover(true)} onPointerLeave={() => hover(false)} onClick={() => click(!clicked)} scale={clicked ? 1.5 : 1}>
+  <meshPhysicalMaterial color={hovered ? "pink" : "#7046f0" }/>
+  <Edges color={'#3e0dd4'} lineWidth={2} scale={1.005}/>
+  <Outlines angle={10} thickness={5} color={'black'} />
+</ShapeGiven>
+    <EffectComposer>
+      {/* <Pixelation granularity={(Math.cos(elapsed) + 1)*4} /> */}
+    </EffectComposer>
+    </>
   );
 }
 
+
 // Main App Component 
+
  const App = () => {
   const shapeRef = useRef()
-  const [shape, setShape] = useState(1);
+  const [shape, setShape] = useState(8);  
+
+  if (shape > 8){
+    setShape(0)
+  }
+  if (shape < 0){
+    setShape(8)
+  }
   
   function getRandomNum(){
     return Math.floor(Math.random() * 9);  
@@ -153,24 +88,21 @@ const AnyShape = ({shape, ...props}) => {
   }
 
   return (
-    <div className='Maindiv'>
-    <h1>Interactive Shape Changer</h1>
-    <div className='canvBox1'>
+    <div style={{ width: "90vw", height: "90vh", border: "2px solid grey", borderRadius: '20px', backgroundColor:'lightblue', justifyItems:'center'}}>
+      <h1>Interactive Shape Visualizer</h1>
+    <div style={{ width: "50vw", height: "50vh", border: "2px solid grey", borderRadius: '20px', backgroundColor:'white', paddingBottom:'1rem'}}>
     <Canvas>
-      <ambientLight intensity={Math.PI / 2} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+      <ambientLight intensity={Math.PI} />
+      <spotLight position={[5, 5, 5]} angle={Math.PI/2} penumbra={.99} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      <AnyShape shape={shape}/>
-      <EffectComposer>
-        {/* <Pixelation granularity={2} /> */}
-      </EffectComposer>
+      <AnyShape shapeType={shape}/>
       <OrbitControls enablePan={false} />
     </Canvas> 
-    </div>
-    <button onClick={handleShapeChange}> Change Shape! </button>
-    <p>{`Here is some stuff in a "<p>" tag`}</p>
-
-    </div>
+  </div>
+  <button onClick={() => setShape(shape - 1)}> Prev </button>
+  <button onClick={() => setShape(shape + 1)}> Forward </button>
+  </div>
+  
   )
 }
 

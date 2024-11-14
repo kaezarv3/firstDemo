@@ -1,10 +1,10 @@
-.canvBox1 {
-  width: 75%;
-  height: 80%;
-  box-sizing: border-box;
-  /* border: 1px solid green; */
-  background-color: rgb(233, 208, 208);
-  margin-bottom: 1rem;
+
+
+.canvas-container {
+/* height: max-content; */
+  /* width: "50vw"; 
+  height: "50vh"; */
+  background-color: lightseagreen;
 }
 
 .Maindiv {

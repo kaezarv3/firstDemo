@@ -18,5 +18,7 @@ h1 {
 }
 body {
   background: #b5cfec;
+  justify-items: center;
+  justify-self: center;
 }
 

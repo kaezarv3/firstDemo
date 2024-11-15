@@ -78,14 +78,14 @@ const AnyShape = ({shapeType}) => {
     return Math.floor(Math.random() * 9);  
   }
 
-  function handleShapeChange () {
-    console.log(shape) 
-    let num = getRandomNum()
-    while (num === shape) {
-      num = getRandomNum()
-    }
-    setShape(num)
-  }
+  // function handleShapeChange () {
+  //   console.log(shape) 
+  //   let num = getRandomNum()
+  //   while (num === shape) {
+  //     num = getRandomNum()
+  //   }
+  //   setShape(num)
+  // }
 
   return (
     <div style={{ width: "90vw", height: "90vh", border: "2px solid grey", borderRadius: '20px', backgroundColor:'lightblue', justifyItems:'center'}}>
